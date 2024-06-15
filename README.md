@@ -5,7 +5,7 @@
 I'm Faqih a Backend Developer
 :mailbox: Reach me out!
 
- [![Linkedin Badge](https://img.shields.io/badge/-Islem-0e76a8?style=flat&labelColor=0e76a8&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/faqih-abdulrachman-03483b1b7/) [![Mail Badge](https://img.shields.io/badge/-@islempenywis-e84393?style=flat&labelColor=e84393&logo=instagram&logoColor=white)](https://instagram.com/islempenywis) [![Mail Badge](https://img.shields.io/badge/-islempenywis-c0392b?style=flat&labelColor=c0392b&logo=gmail&logoColor=white)](mailto:islempenywis@gmail.com)
+ [![Linkedin Badge](https://img.shields.io/badge/-Faqih-0e76a8?style=flat&labelColor=0e76a8&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/faqih-abdulrachman-03483b1b7/) [![Mail Badge](https://img.shields.io/badge/-@iamfaqih-e84393?style=flat&labelColor=e84393&logo=instagram&logoColor=white)](https://instagram.com/islempenywis) [![Mail Badge](https://img.shields.io/badge/-iamFaqih-c0392b?style=flat&labelColor=c0392b&logo=gmail&logoColor=white)](mailto:iamfaqih.rochman@gmail.com)
 
 ### Please follow for more updates on other portfolio
 Join the bi-weekly Newsletter among thousands of other developers and stay in the loop with Web Development, React, Security, Software Engineering, Jobs, AI, Professional Courses and a lot more. 

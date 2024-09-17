@@ -25,6 +25,6 @@ public class CompleteOrUpdateUserProfileResponse {
     private String desaSambung;
     private String kelompokAddress;
     private String desaAddress;
-
+    private RoleResponseDTO roleResponseDTO;
 
 }

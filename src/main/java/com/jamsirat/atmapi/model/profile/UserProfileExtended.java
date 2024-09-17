@@ -1,17 +1,20 @@
 package com.jamsirat.atmapi.model.profile;
 
 import com.jamsirat.atmapi.model.Base.AAuditableBase;
-import com.jamsirat.atmapi.model.Base.BaseMasterData;
-import com.jamsirat.atmapi.model.Participant;
-import com.jamsirat.atmapi.model.Principle;
+import com.jamsirat.atmapi.model.Progress;
+import com.jamsirat.atmapi.statval.constant.IApplicationConstant;
 import com.jamsirat.atmapi.statval.enumeration.EGender;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import com.jamsirat.atmapi.statval.constant.IApplicationConstant.StaticDefaultMessage.ExceptionMessage;
 
 @Entity
 @Table(name = "user_profile_extended")
@@ -45,6 +48,8 @@ public class UserProfileExtended extends AAuditableBase implements Serializable 
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Email(message = ExceptionMessage.EMAIL_VALID_FORMAT)
+    @NotBlank(message = ExceptionMessage.EMAIL_NOT_NULL)
     @Column(name = "email")
     private String email;
 
@@ -60,5 +65,15 @@ public class UserProfileExtended extends AAuditableBase implements Serializable 
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_profile")
     private UserProfile userProfile;
+
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "progress_id")
+    private Progress progress;
+
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "status_id")
+    private Status status;
+
+
 
 }

@@ -10,5 +10,9 @@ import java.util.Optional;
 @Repository
 public interface IDomicileRepository extends JpaRepository<Domicile,Long> {
 
-    Optional<Domicile> findByUserProfileExtendedId (UserProfileExtended userProfileExtended);
+    Optional<Domicile> findByUserProfileExtendedId (Optional<UserProfileExtended> userProfileExtended);
+
+
+
+
 }

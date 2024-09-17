@@ -7,7 +7,8 @@ import lombok.Setter;
 public enum EUserRole {
     USER("USER"),
     ADMIN("ADMIN"),
-    PRINCIPLE("PRINCIPLE");
+    PRINCIPLE("PRINCIPLE"),
+    DEVELOPER("DEVELOPER");
 
     private final String name;
 

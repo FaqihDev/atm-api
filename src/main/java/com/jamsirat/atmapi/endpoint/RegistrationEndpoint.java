@@ -5,6 +5,7 @@ import com.jamsirat.atmapi.dto.request.RegistrationRequest;
 import com.jamsirat.atmapi.dto.response.AuthenticationResponse;
 import com.jamsirat.atmapi.dto.response.HttpResponse;
 import com.jamsirat.atmapi.event.RegistrationCompleteEvent;
+import com.jamsirat.atmapi.model.auth.Token;
 import com.jamsirat.atmapi.repository.ITokenRepository;
 import com.jamsirat.atmapi.service.impl.JwtService;
 import com.jamsirat.atmapi.service.impl.AuthenticationServiceImpl;
@@ -44,16 +45,17 @@ public class RegistrationEndpoint {
     public ResponseEntity<?> register(@RequestBody RegistrationRequest request, HttpServletRequest httpServletRequest) throws ExecutionException, InterruptedException {
         var user = authenticationService.register(request,httpServletRequest);
 
-        CompletableFuture<String>  accessTokenFuture = CompletableFuture.supplyAsync(()-> jwtService.generateToken(user));
-        CompletableFuture<String>  refreshTokenFuture = CompletableFuture.supplyAsync(()-> jwtService.refreshToken(user));
-
         publisher.publishEvent(new RegistrationCompleteEvent(user, authenticationService.applicationUrl(httpServletRequest)));
+        var token = tokenRepository.findAllByValidToken(user.getId());
+        String accessToken = String.valueOf(token.stream().map(Token::getToken)
+                .findFirst());
+        String refreshToken = jwtService.refreshToken(user);
 
         AuthenticationResponse response = AuthenticationResponse.builder()
                 .name(user.getFirstName() + " " + user.getLastName())
                 .isEnabled(user.getIsActive())
-                .accessToken(accessTokenFuture.get())
-                .refreshToken(refreshTokenFuture.get())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .role(EUserRole.USER.getName())
                 .build();
 
@@ -63,6 +65,7 @@ public class RegistrationEndpoint {
                         .developerMessage("Verify your account ! Verification link was sent to your email")
                         .message("User created")
                         .status(HttpStatus.CREATED)
+                        .statusCode(HttpStatus.CREATED.value())
                         .data(response)
                         .build()
         );
@@ -74,12 +77,12 @@ public class RegistrationEndpoint {
         return ResponseEntity.ok(authenticationService.login(request));
     }
 
-    @GetMapping(value = IApplicationConstant.Path.Authentication.VERIFY_ACCOUNT)
+    @PostMapping(value = IApplicationConstant.Path.Authentication.VERIFY_ACCOUNT)
     public ResponseEntity<HttpResponse<?>> verifyEmail(@RequestParam("token") String token) {
         authenticationService.verifyEmail(token);
         return ResponseEntity.ok(HttpResponse.builder()
                 .status(HttpStatus.OK)
-                .message("email verified successfull")
+                .message("email verified successful")
                 .developerMessage("Please login to your account!")
                 .timeStamp(LocalDateTime.now().toString())
                 .statusCode(HttpStatus.OK.value())

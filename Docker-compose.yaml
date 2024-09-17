@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  # PostgreSQL Service
+  postgres:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: atm
+      POSTGRES_USER: jamsirat
+      POSTGRES_PASSWORD: jamsirat
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Spring Boot Application Service
+  app:
+    image: atm-api                   # Image name should match the one built by Maven
+    container_name: spring-boot-atm-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/atm
+      SPRING_DATASOURCE_USERNAME: jamsirat
+      SPRING_DATASOURCE_PASSWORD: jamsirat
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "9090:8080"                  # Expose port 8080 for the app
+    depends_on:
+      - postgres                     # Ensure PostgreSQL is started before the app
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RequestMapping(value = IApplicationConstant.ContextPath.AUTHORIZATION, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = IApplicationConstant.ContextPath.ACCESS, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 public class AuthorizationEndpoint {
 
     private final IAuthorizationService authorizationService;
@@ -30,7 +30,7 @@ public class AuthorizationEndpoint {
          return ResponseEntity.created(URI.create("")).body(
                 HttpResponse.builder()
                         .timeStamp(LocalDateTime.now().toString())
-                        .developerMessage(String.format("You are now %s", response.getRoleName()))
+                        .developerMessage(String.format("Role added :  %s", response.getRoleName()))
                         .message("Access has been granted")
                         .status(HttpStatus.CREATED)
                         .data(response)

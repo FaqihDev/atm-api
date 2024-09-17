@@ -2,22 +2,27 @@ package com.jamsirat.atmapi.mapper;
 
 
 import com.jamsirat.atmapi.BaseMapper.ADATAMapper;
-import com.jamsirat.atmapi.dto.response.CompleteOrUpdateUserProfileResponse;
+import com.jamsirat.atmapi.dto.response.UserProfileDetailResponse;
+import com.jamsirat.atmapi.model.auth.User;
 import com.jamsirat.atmapi.model.profile.Domicile;
 import com.jamsirat.atmapi.model.profile.UserProfile;
 import com.jamsirat.atmapi.model.profile.UserProfileExtended;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserProfileMapper extends ADATAMapper<UserProfileMapper.Request, CompleteOrUpdateUserProfileResponse> {
+@RequiredArgsConstructor
+public class UserProfileMapper extends ADATAMapper<UserProfileMapper.Request, UserProfileDetailResponse> {
 
+
+    private final RoleUserMapper roleUserMapper;
 
     @Override
-    public CompleteOrUpdateUserProfileResponse convert(Request request) {
-        return CompleteOrUpdateUserProfileResponse.builder()
+    public UserProfileDetailResponse convert(Request request) {
+        return UserProfileDetailResponse.builder()
                 .userId(request.userProfile.getUser().getId())
                 .fullName(request.userProfile.getUser().getFirstName() + " " + request.userProfile.getUser().getLastName())
                 .address(request.userProfileExtended.getAddress())
@@ -31,6 +36,7 @@ public class UserProfileMapper extends ADATAMapper<UserProfileMapper.Request, Co
                 .desaSambung(request.domicile.getDesaSambung())
                 .desaAddress(request.domicile.getDesaAddress())
                 .height(request.userProfileExtended.getHeight())
+                .roles(roleUserMapper.entitiesIntoDTOs(request.user.getRoles()))
                 .build();
 
     }
@@ -40,8 +46,15 @@ public class UserProfileMapper extends ADATAMapper<UserProfileMapper.Request, Co
     @NoArgsConstructor
     @Getter
     public static class Request {
-        private UserProfile userProfile;
-        private UserProfileExtended userProfileExtended;
-        private Domicile domicile;
+        public  User user;
+        public  UserProfile userProfile;
+        public  UserProfileExtended userProfileExtended;
+        public  Domicile domicile;
+
+        public Request(UserProfile userProfile, UserProfileExtended userProfileExtended, Domicile domicile) {
+            this.userProfile = userProfile;
+            this.userProfileExtended = userProfileExtended;
+            this.domicile = domicile;
+        }
     }
 }

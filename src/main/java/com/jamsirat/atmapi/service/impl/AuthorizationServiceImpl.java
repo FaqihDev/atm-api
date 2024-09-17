@@ -32,8 +32,8 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
         User user = userRepository.findById(userId).orElseThrow(() -> new DataNotFoundException("User is not found","Please check your request id"));
         List<String> activeRoles = getRolesByLoggedInUser(principal);
         Role newRole = roleRepository.findById(roleId).orElseThrow(() -> new DataNotFoundException("Specified role does not exist","Please check your database"));
-        if (user.getIsActive() == Boolean.TRUE && !activeRoles.contains(EUserRole.ADMIN.getName())) {
-            throw new UnauthorizedGrantingAccessException("You are not allowed to grant access role","User role is not granted");
+        if (user.getIsActive() == Boolean.TRUE && !activeRoles.contains(EUserRole.DEVELOPER.getName())) {
+            throw new UnauthorizedGrantingAccessException("You are not allowed to grant access role","Only User with role DEVELOPER can grant access");
         }
         if (user.getRoles().stream().anyMatch(role -> role.getId().equals(roleId))) {
             throw new RoleHasBeenAddedException(String.format("Role %s has been added to user %s",newRole.getRoleName(),user.getFirstName()),"No need to add role");

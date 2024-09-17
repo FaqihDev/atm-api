@@ -3,6 +3,7 @@ package com.jamsirat.atmapi.model;
 
 import com.jamsirat.atmapi.model.Base.AAuditableBase;
 import com.jamsirat.atmapi.model.Base.BaseMasterData;
+import com.jamsirat.atmapi.model.profile.UserProfileExtended;
 import com.jamsirat.atmapi.statval.enumeration.EProgressStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,5 +24,9 @@ public class Progress extends AAuditableBase implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "progress_status")
     private EProgressStatus status;
+
+    @JoinColumn(name = "user_profile_extended_id")
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private UserProfileExtended userProfileExtendedId;
 
 }

@@ -5,7 +5,10 @@ import lombok.Getter;
 @Getter
 public enum  EProgressStatus {
 
-    AVAILABLE("AVAILABLE"),CONTINUE("CONTINUE"),PROGRESS("PROGRESS"),MATCHED("MATCHED");
+    AVAILABLE("AVAILABLE"),
+    CONTINUE("CONTINUE"),
+    PROGRESS("PROGRESS"),
+    MATCHED("MATCHED");
 
     private final String name;
 

@@ -48,3 +48,5 @@ logging:
           descriptor:
             sql:
               BasicBinder: trace
+      springframework:
+        security: DEBUG

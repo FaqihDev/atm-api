@@ -1,16 +1,18 @@
 package com.jamsirat.atmapi.service;
 
 import com.jamsirat.atmapi.dto.request.CompleteOrUpdateUserProfileRequest;
-import com.jamsirat.atmapi.dto.response.CompleteOrUpdateUserProfileResponse;
-import com.jamsirat.atmapi.dto.response.UserProfilleDetailResponse;
+import com.jamsirat.atmapi.dto.response.UserProfileDetailResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface IUserProfileService {
 
-    CompleteOrUpdateUserProfileResponse completeUserProfile(CompleteOrUpdateUserProfileRequest request);
+    UserProfileDetailResponse completeUserProfile(CompleteOrUpdateUserProfileRequest request);
 
-    CompleteOrUpdateUserProfileResponse updateUserProfile(CompleteOrUpdateUserProfileRequest request);
+    UserProfileDetailResponse updateUserProfile(CompleteOrUpdateUserProfileRequest request);
 
-    UserProfilleDetailResponse getDetailUserProfile(Long userId);
+    UserProfileDetailResponse getDetailUserProfile(HttpServletRequest request);
+
+
 
 
 

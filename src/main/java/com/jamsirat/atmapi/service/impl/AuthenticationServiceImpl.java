@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,9 +71,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
            if (existUser.isPresent()) {
                throw new UserAlreadyExistException("user is already taken","Please choose another email!");
            }
-
-           var validateEmail = emailValidatorService.validateAll(request.getEmail());
-             if(validateEmail) {
                  var user = User.builder()
                          .firstName(request.getFirstName())
                          .lastName(request.getLastName())
@@ -86,9 +84,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                  var jwtToken = jwtService.generateToken(currentUser);
                  saveUserToken(currentUser,jwtToken);
                  return currentUser;
-             } else {
-                 throw new EmailNotValidException("Email is not valid","ExampleEmail : xxx@gmail.com");
-             }
+
     }
 
 
@@ -106,19 +102,33 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public HttpResponse<Object> login (LoginRequest loginRequest){
-       try {
-          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword()));
-       } catch (UserNotActivatedException e) {
-           log.info("Authentication failed : {} ", e.getMessage());
-           throw new UserNotActivatedException("User is not activated yet", "Please verify your account");
-       } catch (org.springframework.security.authentication.BadCredentialsException e) {
-           throw new BadCredentialsException("Invalid username or password");
-       } catch (UserNotFoundException e) {
-           throw new UserNotFoundException("User is not found");
-       }
+    public HttpResponse<Object> login(LoginRequest loginRequest) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(), loginRequest.getPassword()
+                    )
+            );
 
-       var user = userRepository.findByUserName(loginRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException("username not found"));
+        } catch (BadCredentialsException e) {
+            // Throw your custom BadCredentialsException
+            throw new BadCredentialsException("Invalid username or password");
+
+        } catch (UserNotActivatedException e) {
+            // Handle user not activated scenario
+            throw new UserNotActivatedException("User is not activated yet", "Please verify your account");
+
+        } catch (UsernameNotFoundException e) {
+            // Handle user not found scenario
+            throw new UserNotFoundException("User is not found");
+
+        } catch (AuthenticationException e) {
+            // Handle any other types of authentication failures
+            throw new BadCredentialsException(e.getMessage(),e,"Invalid username or password");
+        }
+
+
+    var user = userRepository.findByUserName(loginRequest.getUsername()).orElseThrow(() -> new UsernameNotFoundException("username not found"));
        var jwtToken = jwtService.generateToken(user);
        var refreshToken = jwtService.refreshToken(user);
 
@@ -140,7 +150,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 .timeStamp(LocalDateTime.now().toString())
                 .status(HttpStatus.OK)
                 .statusCode(HttpStatus.OK.value())
-                .developerMessage("Login successfull")
+                .developerMessage("Login successful")
                 .data(response)
                 .build();
     }

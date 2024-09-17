@@ -1,13 +1,13 @@
 package com.jamsirat.atmapi.service.impl;
 
 import com.jamsirat.atmapi.dto.request.CompleteOrUpdateUserProfileRequest;
-import com.jamsirat.atmapi.dto.response.CompleteOrUpdateUserProfileResponse;
-import com.jamsirat.atmapi.dto.response.UserProfilleDetailResponse;
+import com.jamsirat.atmapi.dto.response.UserProfileDetailResponse;
 import com.jamsirat.atmapi.exception.DataNotFoundException;
 import com.jamsirat.atmapi.exception.EmailNotVerifiedException;
+import com.jamsirat.atmapi.exception.InvalidTokenException;
 import com.jamsirat.atmapi.exception.UserProfileAlreadyAddedException;
-import com.jamsirat.atmapi.mapper.UserProfileDetailMapper;
 import com.jamsirat.atmapi.mapper.UserProfileMapper;
+import com.jamsirat.atmapi.model.auth.User;
 import com.jamsirat.atmapi.model.profile.Domicile;
 import com.jamsirat.atmapi.model.profile.UserProfile;
 import com.jamsirat.atmapi.model.profile.UserProfileExtended;
@@ -17,12 +17,17 @@ import com.jamsirat.atmapi.repository.IUserProfileRepository;
 import com.jamsirat.atmapi.repository.IUserRepository;
 import com.jamsirat.atmapi.service.IUserProfileService;
 import com.jamsirat.atmapi.statval.enumeration.EGender;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-
+import java.util.Objects;
 import java.util.Optional;
 
+import com.jamsirat.atmapi.statval.constant.IApplicationConstant.StaticDefaultMessage.ExceptionMessage;
+import com.jamsirat.atmapi.statval.constant.IApplicationConstant.StaticDefaultMessage.DeveloperExceptionMessage;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -33,18 +38,18 @@ public class UserProfileServiceImpl implements IUserProfileService {
     private final IDomicileRepository domicileRepository;
     private final IUserRepository userRepository;
     private final UserProfileMapper userProfileMapper;
-    private final UserProfileDetailMapper userProfileDetailMapper;
+
 
 
     @Override
-    public CompleteOrUpdateUserProfileResponse completeUserProfile(CompleteOrUpdateUserProfileRequest request) {
+    public UserProfileDetailResponse completeUserProfile(CompleteOrUpdateUserProfileRequest request) {
 
         //todo : handle once userprofile is already added
+        var userId = userRepository.findById(request.getUserId()).orElseThrow(()-> new DataNotFoundException(String.format("User with id %s is not found{}",request.getUserId()),"Please check your data"));
         var userProfileByUserId = userProfileRepository.findByUserId(request.getUserId());
         if (userProfileByUserId.isPresent()) {
             throw new UserProfileAlreadyAddedException(String.format("Profile with user id %s already added",request.getUserId()),"Please go to update feature anyway!");
         }
-        var userId = userRepository.findById(request.getUserId()).orElseThrow(()-> new DataNotFoundException(String.format("User with id %s is not found{}",request.getUserId()),"Please check your data"));
 
         if (Boolean.FALSE.equals(userId.getIsActive())) {
                 throw new EmailNotVerifiedException("Email is not verified!","Please verify you account");
@@ -78,25 +83,23 @@ public class UserProfileServiceImpl implements IUserProfileService {
                     .kelompokAddress(request.getKelompokAddress())
                     .build();
 
-        userProfileRepository.save(userProfile);
-        userProfileExtendedRepository.save(userProfileExtended);
-        domicileRepository.save(domicile);
+       UserProfile userProfile1 = userProfileRepository.save(userProfile);
+       UserProfileExtended userProfileExtended1 =  userProfileExtendedRepository.save(userProfileExtended);
+       Domicile domicile1 =  domicileRepository.save(domicile);
 
-            if (userProfileByUserId.isPresent()) {
-                UserProfileMapper.Request requestMapper = new UserProfileMapper.Request(userProfileByUserId.get(),userProfileExtended,domicile);
-                return userProfileMapper.convert(requestMapper);
-            }
+       return  userProfileMapper.convert(new UserProfileMapper.Request(userProfile1,userProfileExtended1,domicile1));
 
-        return null;
+
     }
 
 
 
-    public CompleteOrUpdateUserProfileResponse updateUserProfile(CompleteOrUpdateUserProfileRequest request) {
+    public UserProfileDetailResponse updateUserProfile(CompleteOrUpdateUserProfileRequest request) {
         var userProfileByUserId = userProfileRepository.findByUserId(request.getUserId());
         var userProfileExtended = userProfileExtendedRepository.findByUserProfile(userProfileByUserId).orElseThrow(() -> new DataNotFoundException("User profile is not found","Please check your user id"));
-        var domicile = domicileRepository.findByUserProfileExtendedId(userProfileExtended).orElseThrow(() -> new DataNotFoundException("Domicile is not found","please check your data"));
+        var domicile = domicileRepository.findByUserProfileExtendedId(Optional.ofNullable(userProfileExtended)).orElseThrow(() -> new DataNotFoundException("Domicile is not found","please check your data"));
 
+        assert userProfileExtended != null;
         userProfileExtended.setAddress(request.getAddress());
         userProfileExtended.setBirthDate(request.getBirthDate());
         userProfileExtended.setBirthPlace(request.getBirthPlace());
@@ -113,19 +116,36 @@ public class UserProfileServiceImpl implements IUserProfileService {
         domicileRepository.save(domicile);
 
         if (userProfileByUserId.isPresent()) {
-            UserProfileMapper.Request requestMapper = new UserProfileMapper.Request(userProfileByUserId.get(),userProfileExtended,domicile);
+            UserProfileMapper.Request requestMapper = new UserProfileMapper.Request(userProfileByUserId.get(), userProfileExtended, domicile);
             return userProfileMapper.convert(requestMapper);
         }
         return null;
     }
 
     @Override
-    public UserProfilleDetailResponse getDetailUserProfile(Long userId) {
-        var userProfileByUserId = userProfileRepository.findByUserId(userId).orElseThrow(() ->  new DataNotFoundException(String.format("User with id %s not found",userId),"Check your userId"));
-        var userProfileExtended = userProfileExtendedRepository.findByUserProfile(Optional.ofNullable(userProfileByUserId)).orElseThrow(() ->  new DataNotFoundException("Profile extended not found","please check your data"));
-        var domicile = domicileRepository.findByUserProfileExtendedId(userProfileExtended).orElseThrow(() -> new DataNotFoundException("Domicile is not found","Please check your data"));
-        UserProfileDetailMapper.Request requestMapper = new UserProfileDetailMapper.Request(userProfileByUserId,userProfileExtended,domicile);
-        return userProfileDetailMapper.convert(requestMapper);
+    public UserProfileDetailResponse getDetailUserProfile(HttpServletRequest request) {
+        User user = null;
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (Objects.nonNull(authHeader) && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            try {
+                user = userRepository.findByToken(token);
+            } catch (JwtException e) {
+                throw new InvalidTokenException(ExceptionMessage.TOKEN_IS_INVALID,DeveloperExceptionMessage.TOKEN_IS_INVALID);
+            }
+            assert user != null;
+
+            var userProfile = userProfileRepository.getUserProfileByUser(user);
+            var userProfileExtended = userProfileExtendedRepository.findByUserProfile(userProfile);
+            var domicile = domicileRepository.findByUserProfileExtendedId(userProfileExtended);
+
+            if (userProfile.isPresent() && domicile.isPresent() && Objects.nonNull(userProfileExtended)) {
+                var userProfileRequest = new UserProfileMapper.Request(user, userProfile.get(), userProfileExtended.get(), domicile.get());
+                return userProfileMapper.convert(userProfileRequest);
+            }
+
+        }
+        return null;
 
     }
 }

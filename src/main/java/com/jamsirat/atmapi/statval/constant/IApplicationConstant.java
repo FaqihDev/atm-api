@@ -8,6 +8,7 @@ public interface IApplicationConstant {
         String AUTHENTICATION = "/api/v1/auth";
         String ACCESS = "/api/v1/access";
         String USER_PROFILE = "/api/v1/user";
+        String MENU = "/api/v1/menu";
     }
 
     interface Path{
@@ -36,6 +37,10 @@ public interface IApplicationConstant {
             String VERIFY_ACCOUNT = "/verifyEmail";
         }
 
+        interface Menu {
+            String FETCH_MENU = "/fetch-menu";
+        }
+
     }
 
     interface  DefaultNumber {
@@ -58,7 +63,8 @@ public interface IApplicationConstant {
             String FAILED_DATA_USER = "Failed to get data user!";
             String OUT_OF_STOCK_EXCEPTION = "Sorry, we are out of stock";
             String PRODUCT_NOT_FOUND_EXCEPTION = "Product with id is not exists";
-            String TOKEN_IS_INVALID = "Token is invalid";
+            String TOKEN_IS_INVALID = "Token is invalid or expired";
+            String ACCESS_DENIED = "Access denied for this role";
             String BAD_CREDENTIALS = "Password or email incorrect";
             String AUTHORIZATION_HEADER_INVALID = "Authorization header and Bearer is not set";
         }
@@ -71,6 +77,7 @@ public interface IApplicationConstant {
             String PRODUCT_NOT_FOUND_EXCEPTION = "Make sure product id is correct";
             String OUT_OF_STOCK_EXCEPTION = "Please contact your Administrator";
             String TOKEN_IS_INVALID       = "Please do login";
+            String ACCESS_DENIED = "Access denied for this role";
             String AUTHORIZATION_HEADER_INVALID = "Please check your header";
             String BAD_CREDENTIALS = "Please check your password and email";
         }

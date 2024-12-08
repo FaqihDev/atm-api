@@ -47,9 +47,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final EmailValidatorServiceImpl emailValidatorService;
-
-
 
     @Override
     @Transactional
@@ -133,7 +130,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
        var refreshToken = jwtService.refreshToken(user);
 
         String roles = user.getRoles().stream()
-                .map(role -> role.getUserRole().getName())
+                .map(role -> role.getUserRole().getRoleName())
                 .collect(Collectors.joining(", "));
         AuthenticationResponse response = AuthenticationResponse.builder()
                         .name(user.getFirstName())

@@ -64,8 +64,8 @@ public class AdminServiceImpl  {
 
             // Check if user has ADMIN role
             boolean isAdmin = user.getRoles().stream()
-                    .map(role -> role.getUserRole().getName())
-                    .anyMatch(roleName -> roleName.equals(EUserRole.ADMIN.getName()));
+                    .map(role -> role.getUserRole().getRoleName())
+                    .anyMatch(roleName -> roleName.equals(EUserRole.ADMIN.getRoleName()));
 
             if (!isAdmin) {
                 throw new UnauthorizedGrantingAccessException("Unauthorized role", "Limited scope and access");
@@ -122,8 +122,8 @@ public class AdminServiceImpl  {
 
             // Check if user has ADMIN role
             boolean isAdmin = user.getRoles().stream()
-                    .map(role -> role.getUserRole().getName())
-                    .anyMatch(roleName -> roleName.equals(EUserRole.ADMIN.getName()));
+                    .map(role -> role.getUserRole().getRoleName())
+                    .anyMatch(roleName -> roleName.equals(EUserRole.ADMIN.getRoleName()));
 
             if (!isAdmin) {
                 throw new UnauthorizedGrantingAccessException("Unauthorized role", "Limited scope and access");

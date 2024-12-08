@@ -56,7 +56,7 @@ public class RegistrationEndpoint {
                 .isEnabled(user.getIsActive())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(EUserRole.USER.getName())
+                .role(EUserRole.USER.getRoleName())
                 .build();
 
         return ResponseEntity.created(URI.create("")).body(
@@ -89,9 +89,6 @@ public class RegistrationEndpoint {
                 .build());
 
     }
-
-
-
 
     @PostMapping(IApplicationConstant.Path.Authentication.REFRESH_TOKEN)
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {

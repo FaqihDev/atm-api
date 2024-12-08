@@ -1,7 +1,7 @@
 package com.jamsirat.atmapi.statval.enumeration;
 
+
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public enum EUserRole {
@@ -10,10 +10,10 @@ public enum EUserRole {
     PRINCIPLE("PRINCIPLE"),
     DEVELOPER("DEVELOPER");
 
-    private final String name;
+    private String roleName;
 
     EUserRole(String name) {
-        this.name = name;
+        this.roleName = name;
     }
 
 }

@@ -18,40 +18,40 @@ public class AdviceHandler {
 
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public HttpResponse handleDataNotFoundException(DataNotFoundException e) {
+    public HttpResponse<?> handleDataNotFoundException(DataNotFoundException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.NOT_FOUND,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(OutOfStockException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse outOfStockException(OutOfStockException e) {
+    public HttpResponse<?> outOfStockException(OutOfStockException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(UserProfileAlreadyAddedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse UnauhtorizedEmailUser(UserProfileAlreadyAddedException e) {
+    public HttpResponse<?> UnauhtorizedEmailUser(UserProfileAlreadyAddedException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
     @ExceptionHandler(EmailNotVerifiedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse userProfileException(EmailNotVerifiedException e) {
+    public HttpResponse<?> userProfileException(EmailNotVerifiedException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(EmailNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse userProfileException(EmailNotValidException e) {
+    public HttpResponse<?> userProfileException(EmailNotValidException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
     @ExceptionHandler(UnauthorizedGrantingAccessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse unAuthorizeGrantRole(UnauthorizedGrantingAccessException e) {
+    public HttpResponse<?> unAuthorizeGrantRole(UnauthorizedGrantingAccessException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
     @ExceptionHandler(EmailAlreadyVerifiedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse emailAlreadyVerified(EmailAlreadyVerifiedException e) {
+    public HttpResponse<?> emailAlreadyVerified(EmailAlreadyVerifiedException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
@@ -63,37 +63,43 @@ public class AdviceHandler {
 
     @ExceptionHandler(UserNotActivatedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse userIsNotActivated(UserNotActivatedException e) {
+    public HttpResponse<?> userIsNotActivated(UserNotActivatedException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public HttpResponse badCredentials(BadCredentialsException e) {
+    public HttpResponse<?> badCredentials(BadCredentialsException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.UNAUTHORIZED,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse userNotFound(UserNotFoundException e) {
+    public HttpResponse<?> userNotFound(UserNotFoundException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(InvalidTokenException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse invalidToken(InvalidTokenException e) {
+    public HttpResponse<?> invalidToken(InvalidTokenException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(RoleHasBeenAddedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse roleHasBeenAdded(RoleHasBeenAddedException e) {
+    public HttpResponse<?> roleHasBeenAdded(RoleHasBeenAddedException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 
     @ExceptionHandler(InvalidDataException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public HttpResponse invalidData(InvalidDataException e) {
+    public HttpResponse<?> invalidData(InvalidDataException e) {
+        return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
+    }
+
+    @ExceptionHandler(TokenAlreadyExpiredException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public HttpResponse<?> tokenAlreadyExpired(TokenAlreadyExpiredException e) {
         return customExceptionHandler.createHttpResponse(HttpStatus.BAD_REQUEST,e.getExceptionMessage(),e.getDeveloperMessage());
     }
 }

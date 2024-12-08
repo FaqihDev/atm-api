@@ -33,7 +33,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
         user = event.getUser();
         var verificationTokens = tokenRepository.findAllByValidToken(user.getId());
         String verificationToken = verificationTokens.stream().map(x-> x.getToken()).findFirst().get();
-        String url = event.getApplicationUrl() + "/auth/v1/register/verifyEmail?token=" + verificationToken;
+        String url = event.getApplicationUrl() + "/auth/v1/verifyEmail?token=" + verificationToken;
 
         try {
             sendVerificationEmail(url);

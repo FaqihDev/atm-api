@@ -1,13 +1,16 @@
 package com.jamsirat.atmapi.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataNotFoundException extends RuntimeException implements CustomException{
+public class TokenAlreadyExpiredException extends RuntimeException implements CustomException {
+
     private String exceptionMessage;
     private String developerMessage;
 

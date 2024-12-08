@@ -18,5 +18,8 @@ public interface IRoleRepository extends JpaRepository<Role,Long> {
     @Query("SELECT r FROM Role r JOIN User u where u.id = :userId")
     Set<Role> findRoleByUserId(Long userId) throws DataNotFoundException;
 
+    @Query("SELECT p.name FROM Role r JOIN r.permissions p JOIN r.users u WHERE u.userName = :username")
+    Set<String> findPermissionByUsername(String username);
+
 
 }
